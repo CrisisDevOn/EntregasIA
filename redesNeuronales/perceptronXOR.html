@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptrón XOR</title>
+
+    <!-- Se conserva la librería del ejemplo del profesor -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        #grafica{
+            padding:10px;
+            float:left;
+            width:600px;
+            height:400px;
+            border:solid 1px;
+        }
+
+        #divTabla{
+            width:220px;
+            padding:10px;
+            border:solid 1px;
+            float:left;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th,td{
+            border:1px solid black;
+            padding:4px;
+            text-align:center;
+        }
+
+        th{
+            background:#f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Perceptron para las salidas de XOR usando ingenieria de caracteristicas</h2>
+
+<div>
+
+    
+    <div id="grafica">
+        <canvas id="miGrafica"></canvas>
+    </div>
+
+    <div id="divTabla">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>a</th>
+                    <th>b</th>
+                    <th>Clase XOR</th>
+                    <th>Color</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>Azul</td>
+                </tr>
+
+                <tr>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>Rojo</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>Rojo</td>
+                </tr>
+
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>Azul</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <br>
+
+        <label id="salida"></label>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function entrena(){
+
+    // Ingenieraa de caracteristicas
+    // z = x1*x2
+
+    const X = [
+        [0,0,0],
+        [0,1,0],
+        [1,0,0],
+        [1,1,1]
+    ];
+
+    const y = [0,1,1,0];
+
+    // Pesos
+
+    let w = [
+        Math.random(),
+        Math.random(),
+        Math.random()
+    ];
+
+    // Bias
+
+    let b = Math.random();
+
+    const eta = 0.1;
+
+    // Forward
+
+    const forward = (x)=>{
+
+        const sum =
+            w[0]*x[0] +
+            w[1]*x[1] +
+            w[2]*x[2] +
+            b;
+
+        return sum>0 ? 1 : 0;
+
+    };
+
+    // Entrenamiento
+
+    for(let epoch=0; epoch<100; epoch++){
+
+        for(let i=0;i<X.length;i++){
+
+            const y_pred = forward(X[i]);
+
+            const e = y[i]-y_pred;
+
+            w[0]=w[0]+eta*e*X[i][0];
+            w[1]=w[1]+eta*e*X[i][1];
+            w[2]=w[2]+eta*e*X[i][2];
+
+            b=b+eta*e;
+
+        }
+
+    }
+
+    console.log("Pesos:",w);
+    console.log("Bias:",b);
+
+    console.log("====== PRUEBAS ======");
+
+    for(let i=0;i<X.length;i++){
+
+        console.log(
+            X[i],
+            "Esperado:",y[i],
+            "Obtenido:",forward(X[i])
+        );
+
+    }
+
+    document.getElementById("salida").innerText=`
+Parámetros del plano
+
+w0 = ${b}
+
+w1 = ${w[0]}
+
+w2 = ${w[1]}
+
+w3 = ${w[2]}
+`;
+
+    return{
+
+        w0:b,
+        w1:w[0],
+        w2:w[1],
+        w3:w[2]
+
+    };
+
+}
+
+const plano = entrena();
+
+console.log(plano);
+
+
+</script>
+
+</body>
+</html>
